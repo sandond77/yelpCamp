@@ -25,15 +25,16 @@ app.get('/', (req, res) => {
 });
 
 app.get('/makeCampground', async (req, res) => {
-	const camp = new Campground({
-		title: 'test1',
-		description: 'this is a sample description'
-	});
-
-	await camp
-		.save()
-		.then(res.send(camp))
-		.catch((err) => `error occured: ${err}`);
+	try {
+		const camp = new Campground({
+			title: 'test1',
+			description: 'this is a sample description'
+		});
+		await camp.save();
+		res.send(camp);
+	} catch (error) {
+		console.log(`error occured: ${error}`);
+	}
 });
 
 app.listen(port, () => {
