@@ -24,17 +24,9 @@ app.get('/', (req, res) => {
 	res.render('home');
 });
 
-app.get('/makeCampground', async (req, res) => {
-	try {
-		const camp = new Campground({
-			title: 'test1',
-			description: 'this is a sample description'
-		});
-		await camp.save();
-		res.send(camp);
-	} catch (error) {
-		console.log(`error occured: ${error}`);
-	}
+app.get('/campgrounds', async (req, res) => {
+	const campgrounds = await Campground.find({});
+	res.render('campgrounds/index', { campgrounds });
 });
 
 app.listen(port, () => {
