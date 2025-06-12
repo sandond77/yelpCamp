@@ -1,12 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YelpCamp</title>
-    <h1>This is home</h1>
-</head>
-<body>
-    
-</body>
-</html>
+<% layout('layouts/boilerplate') %>
+    <h1> Campgrounds Page</h1>
+    <% for (let campground of campgrounds) {%>
+        <div class="campground">
+            <li>
+                <a href="/campgrounds/<%=campground._id%>"><%= campground.title %> (<%= campground.location %>)</a>
+            </li>
+        </div>
+    <% }%>
+<% layout('layouts/boilerplate') %>

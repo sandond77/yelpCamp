@@ -1,5 +1,6 @@
 const express = require('express');
 const ejs = require('ejs');
+const ejsMate = require('ejs-mate');
 const path = require('path');
 const mongoose = require('mongoose');
 const methodOveride = require('method-override');
@@ -17,6 +18,7 @@ async function main() {
 const Campground = require('./models/campground');
 
 //EJS setup with express and folder directory
+app.engine('ejs', ejsMate);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname + '/views'));
 app.use(express.urlencoded({ extended: true })); //allows express to parse json
