@@ -7,6 +7,7 @@ const methodOveride = require('method-override');
 const app = express();
 const port = process.env.PORT || 3000;
 const catchAsync = require('./utils/catchAsync');
+const ExpressError = require('./utils/ExpressError');
 
 //section for mongoose connection and database connection
 main().catch((err) => console.log(`connection error: ${err}`));
@@ -41,6 +42,8 @@ app.get(
 app.post(
 	'/campgrounds',
 	catchAsync(async (req, res, next) => {
+		if (!req.body.campground)
+			throw new ExpressError('Invalid Campground Data', 400);
 		const campground = new Campground(req.body.campground);
 		await campground.save();
 		res.redirect(`/campgrounds/${campground._id}`);
@@ -88,8 +91,16 @@ app.delete(
 	})
 );
 
+app.all(/.*/, (req, res, next) => {
+	next(new ExpressError('Page Not Found', 404));
+});
+
 app.use((err, req, res, next) => {
-	res.send(`error occured`);
+	const { statusCode = 500 } = err;
+	if (!err.message) {
+		err.message = 'Internal Server Error';
+	}
+	res.status(statusCode).render('error', { err, statusCode });
 });
 
 app.listen(port, () => {
