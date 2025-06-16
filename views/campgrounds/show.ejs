@@ -14,7 +14,7 @@
                         </h6>
                     </li>
                     <li class="list-group-item"><%= campground.description %></li>
-                    <li class="list-group-item">Price per night: $<%= campground.price%></li>
+                    <li class="list-group-item">$<%= campground.price%>/Night</li>
                     <li class="list-group-item">
                         <div>
                             <form action="/campgrounds/<%= campground._id%>?_method=DELETE" method="POST">
