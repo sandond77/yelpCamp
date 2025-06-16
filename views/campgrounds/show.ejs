@@ -17,10 +17,12 @@
                     <li class="list-group-item">Price per night: $<%= campground.price%></li>
                     <li class="list-group-item">
                         <div>
-                            <a class="btn btn-secondary" href="/campgrounds/<%= campground._id%>/edit">Edit Campground</a>
-                            <button type="submit" class="btn btn-danger">Delete Campground</button>
+                            <form action="/campgrounds/<%= campground._id%>?_method=DELETE" method="POST">
+                                <a class="btn btn-secondary" href="/campgrounds/<%= campground._id%>/edit">Edit Campground</a>
+                                <button type="submit" class="btn btn-danger">Delete Campground</button>
+                            </form>
                         </div>
-                        <form action="/campgrounds/<%= campground._id%>?_method=DELETE" method="POST"> </form>
+
                     </li>           
                 </ul>
                 <div class="text-muted text-center">
