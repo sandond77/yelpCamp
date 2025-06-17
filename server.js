@@ -8,6 +8,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 const catchAsync = require('./utils/catchAsync');
 const ExpressError = require('./utils/ExpressError');
+const Joi = require('joi');
 
 //section for mongoose connection and database connection
 main().catch((err) => console.log(`connection error: ${err}`));
@@ -27,6 +28,27 @@ app.use(express.urlencoded({ extended: true })); //allows express to parse json
 app.use(express.static(__dirname + '/public')); //for serving static pages;
 app.use(methodOveride('_method')); //for using different crud methods on form submission
 
+const validateCampground = (req, res, next) => {
+	const campgroundSchema = Joi.object({
+		campground: Joi.object({
+			title: Joi.string().required(),
+			price: Joi.number().required().min(0),
+			image: Joi.string().required(),
+			location: Joi.string().required(),
+			description: Joi.string().required()
+		}).required()
+	});
+
+	const { error } = campgroundSchema.validate(req.body);
+	console.log(error);
+	if (error) {
+		const msg = error.details.map((el) => el.message).join(',');
+		throw new ExpressError(msg, 400);
+	} else {
+		next();
+	}
+};
+
 app.get('/', (req, res) => {
 	res.redirect('/campgrounds');
 });
@@ -41,9 +63,8 @@ app.get(
 
 app.post(
 	'/campgrounds',
+	validateCampground,
 	catchAsync(async (req, res, next) => {
-		if (!req.body.campground)
-			throw new ExpressError('Invalid Campground Data', 400);
 		const campground = new Campground(req.body.campground);
 		await campground.save();
 		res.redirect(`/campgrounds/${campground._id}`);
@@ -64,6 +85,7 @@ app.get(
 
 app.put(
 	'/campgrounds/:id',
+	validateCampground,
 	catchAsync(async (req, res) => {
 		const id = req.params.id;
 		const campground = await Campground.findByIdAndUpdate(id, {
