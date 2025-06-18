@@ -44,8 +44,17 @@
                 <textarea class="form-control" name="review[body]" id="body" cols="30" rows="3" required></textarea>
                 <div class="invalid-feedback">Cannot Be Empty</div>
             </div>
-            <button class="btn btn-danger">Submit</button>
+            <button class="btn btn-danger mb-3">Submit</button>
         </form>
+        <div class="reviews">
+            <%for(let review of campground.reviews){ %>
+            <div class="border border-primary mb-3">
+                <p>Rating: <%=review.rating%>
+                </p>
+                <p>Review: <%=review.body%></p>
+            </div>
+            <%} %>
+        </div>
     </div>
 </div>
 
