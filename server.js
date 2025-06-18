@@ -9,7 +9,10 @@ const port = process.env.PORT || 3000;
 const catchAsync = require('./utils/catchAsync');
 const ExpressError = require('./utils/ExpressError');
 const Joi = require('joi');
-const { campgroundValidationSchema } = require('./validationSchemas');
+const {
+	campgroundValidationSchema,
+	reviewValidationSchema
+} = require('./validationSchemas');
 
 //section for mongoose connection and database connection
 main().catch((err) => console.log(`connection error: ${err}`));
@@ -32,6 +35,16 @@ app.use(methodOveride('_method')); //for using different crud methods on form su
 
 const validateCampground = (req, res, next) => {
 	const { error } = campgroundValidationSchema.validate(req.body);
+	if (error) {
+		const msg = error.details.map((el) => el.message).join(',');
+		throw new ExpressError(msg, 400);
+	} else {
+		next();
+	}
+};
+
+const validateReview = (req, res, next) => {
+	const { error } = reviewValidationSchema.validate(req.body);
 	if (error) {
 		const msg = error.details.map((el) => el.message).join(',');
 		throw new ExpressError(msg, 400);
@@ -106,6 +119,7 @@ app.delete(
 
 app.post(
 	'/campgrounds/:id/reviews',
+	validateReview,
 	catchAsync(async (req, res) => {
 		const id = req.params.id;
 		const campground = await Campground.findById(id);
