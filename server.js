@@ -20,6 +20,7 @@ async function main() {
 	// use `await mongoose.connect('mongodb://user:password@127.0.0.1:27017/test');` if your database has auth enabled
 }
 const Campground = require('./models/campground');
+const Review = require('./models/review');
 
 //EJS setup with express and folder directory
 app.engine('ejs', ejsMate);
@@ -100,6 +101,19 @@ app.delete(
 		const id = req.params.id;
 		const campground = await Campground.findByIdAndDelete(id);
 		res.redirect('/campgrounds');
+	})
+);
+
+app.post(
+	'/campgrounds/:id/reviews',
+	catchAsync(async (req, res) => {
+		const id = req.params.id;
+		const campground = await Campground.findById(id);
+		const review = new Review(req.body.review);
+		campground.reviews.push(review);
+		await campground.save();
+		await review.save();
+		res.redirect(`/campgrounds/${id}`);
 	})
 );
 
