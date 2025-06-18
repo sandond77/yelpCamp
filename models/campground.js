@@ -23,7 +23,6 @@ CampgroundSchema.post('findOneAndDelete', async function (doc) {
 				$in: doc.reviews //will remove all ids thats in the doc.review object
 			}
 		});
-		console.log('deleting');
 	}
 });
 
