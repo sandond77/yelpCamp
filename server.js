@@ -6,6 +6,8 @@ const mongoose = require('mongoose');
 const methodOveride = require('method-override');
 const app = express();
 const port = process.env.PORT || 3000;
+
+//backend validation for forms
 const catchAsync = require('./utils/catchAsync');
 const ExpressError = require('./utils/ExpressError');
 const Joi = require('joi');
@@ -13,7 +15,14 @@ const {
 	campgroundValidationSchema,
 	reviewValidationSchema
 } = require('./validationSchemas');
+
+//models
+const Campground = require('./models/campground');
+const Review = require('./models/review');
+
+//routes
 const campgroundRoutes = require('./routes/campgrounds');
+const reviewRoutes = require('./routes/reviews');
 
 //section for mongoose connection and database connection
 main().catch((err) => console.log(`connection error: ${err}`));
@@ -23,8 +32,6 @@ async function main() {
 	console.log('connected to mongod');
 	// use `await mongoose.connect('mongodb://user:password@127.0.0.1:27017/test');` if your database has auth enabled
 }
-const Campground = require('./models/campground');
-const Review = require('./models/review');
 
 //EJS setup with express and folder directory
 app.engine('ejs', ejsMate);
@@ -35,6 +42,7 @@ app.use(express.static(__dirname + '/public')); //for serving static pages;
 app.use(methodOveride('_method')); //for using different crud methods on form submission
 
 app.use('/campgrounds', campgroundRoutes);
+app.use('/campgrounds/:id/reviews', reviewRoutes);
 
 app.get('/', (req, res) => {
 	res.redirect('/campgrounds');

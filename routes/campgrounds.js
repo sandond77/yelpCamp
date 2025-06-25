@@ -5,10 +5,7 @@ const ExpressError = require('../utils/ExpressError');
 const Campground = require('../models/campground');
 const Review = require('../models/review');
 
-const {
-	campgroundValidationSchema,
-	reviewValidationSchema
-} = require('../validationSchemas');
+const { campgroundValidationSchema } = require('../validationSchemas');
 
 const validateCampground = (req, res, next) => {
 	const { error } = campgroundValidationSchema.validate(req.body);
@@ -89,30 +86,6 @@ router.delete(
 		const id = req.params.id;
 		const campground = await Campground.findByIdAndDelete(id);
 		res.redirect('/campgrounds');
-	})
-);
-
-router.post(
-	'/:id/reviews',
-	validateReview,
-	catchAsync(async (req, res) => {
-		const id = req.params.id;
-		const campground = await Campground.findById(id);
-		const review = new Review(req.body.review);
-		campground.reviews.push(review);
-		await campground.save();
-		await review.save();
-		res.redirect(`/campgrounds/${id}`);
-	})
-);
-
-router.delete(
-	'/:id/reviews/:reviewId',
-	catchAsync(async (req, res) => {
-		const { id, reviewId } = req.params;
-		await Campground.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
-		await Review.findByIdAndDelete(reviewId);
-		res.redirect(`/campgrounds/${id}`);
 	})
 );
 
