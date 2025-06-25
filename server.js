@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const methodOverride = require('method-override');
 const app = express();
 const session = require('express-session');
+const flash = require('connect-flash');
 const port = process.env.PORT || 3000;
 
 //backend validation for forms
@@ -54,17 +55,23 @@ const sessionConfig = {
 	}
 };
 app.use(session(sessionConfig));
+app.use(flash());
+
+app.use((req, res, next) => {
+	res.locals.success = req.flash('success');
+	next();
+});
 
 app.use('/campgrounds', campgroundRoutes);
 app.use('/campgrounds/:id/reviews', reviewRoutes);
 
 app.get('/', (req, res) => {
-	res.send('home');
+	res.redirect('/campgrounds');
 });
 
-// app.all(/.*/, (req, res, next) => {
-// 	next(new ExpressError('Page Not Found', 404));
-// });
+app.all(/.*/, (req, res, next) => {
+	next(new ExpressError('Page Not Found', 404));
+});
 
 app.use((err, req, res, next) => {
 	const { statusCode = 500 } = err;
