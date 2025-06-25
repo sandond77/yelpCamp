@@ -1,12 +1,12 @@
-//for showing range value
-const rangeInput = document.getElementById('rating');
-const rangeOutput = document.getElementById('ratingValue');
-// Set initial value
-rangeOutput.textContent = rangeInput.value;
+// //for showing range value
+// const rangeInput = document.getElementById('rating');
+// const rangeOutput = document.getElementById('ratingValue');
+// // Set initial value
+// rangeOutput.textContent = rangeInput.value;
 
-rangeInput.addEventListener('input', function () {
-	rangeOutput.textContent = this.value;
-});
+// rangeInput.addEventListener('input', function () {
+// 	rangeOutput.textContent = this.value;
+// });
 
 //form validation from bootstrap dos
 // Example starter JavaScript for disabling form submissions if there are invalid fields

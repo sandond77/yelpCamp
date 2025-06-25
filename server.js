@@ -5,6 +5,7 @@ const path = require('path');
 const mongoose = require('mongoose');
 const methodOverride = require('method-override');
 const app = express();
+const session = require('express-session');
 const port = process.env.PORT || 3000;
 
 //backend validation for forms
@@ -41,6 +42,18 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname + '/views'));
 app.use(express.urlencoded({ extended: true })); //allows express to parse json
 app.use(methodOverride('_method')); //for using different crud methods on form submission
+
+const sessionConfig = {
+	secret: 'thisshouldbeabettersecret!',
+	resave: false,
+	saveUninitialized: true,
+	cookie: {
+		httpOnly: true,
+		expires: Date.now() + 1000 * 60 * 60 * 24 * 7, //expires 7 days from issuance
+		maxAge: 1000 * 60 * 60 * 24 * 7
+	}
+};
+app.use(session(sessionConfig));
 
 app.use('/campgrounds', campgroundRoutes);
 app.use('/campgrounds/:id/reviews', reviewRoutes);
