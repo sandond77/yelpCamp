@@ -18,6 +18,16 @@ const validateCampground = (req, res, next) => {
 	}
 };
 
+const isAuthor = async (req, res, next) => {
+	const { id } = req.params;
+	const campground = await Campground.findById(id);
+	if (!campground.author.equals(req.user._id)) {
+		req.flash('error', 'You do not have permission to do this!');
+		return res.redirect(`/campgrounds/${id}`);
+	}
+	next();
+};
+
 router.get(
 	'/',
 	catchAsync(async (req, res) => {
@@ -61,13 +71,9 @@ router.put(
 	'/:id',
 	validateCampground,
 	isLoggedIn,
+	isAuthor,
 	catchAsync(async (req, res) => {
 		const id = req.params.id;
-		const camp = await Campground.findById(id);
-		if (!camp.author.equals(req.user._id)) {
-			req.flash('error', 'You do not have permission to do this!');
-			return res.redirect(`/campgrounds/${id}`);
-		}
 		const campground = await Campground.findByIdAndUpdate(id, {
 			...req.body.campground
 		});
@@ -79,6 +85,7 @@ router.put(
 router.get(
 	'/:id/edit',
 	isLoggedIn,
+	isAuthor,
 	catchAsync(async (req, res) => {
 		const id = req.params.id;
 		const campground = await Campground.findById(id);
@@ -86,10 +93,7 @@ router.get(
 			req.flash('error', 'Campground does not exist!');
 			return res.redirect('/campgrounds');
 		}
-		if (!campground.author.equals(req.user._id)) {
-			req.flash('error', 'You do not have permission to do this!');
-			return res.redirect(`/campgrounds/${id}`);
-		}
+
 		res.render('campgrounds/edit', { campground });
 	})
 );
@@ -97,13 +101,9 @@ router.get(
 router.delete(
 	'/:id',
 	isLoggedIn,
+	isAuthor,
 	catchAsync(async (req, res) => {
 		const id = req.params.id;
-		const camp = await Campground.findById(id);
-		if (!camp.author.equals(req.user._id)) {
-			req.flash('error', 'You do not have permission to do this!');
-			return res.redirect(`/campgrounds/${id}`);
-		}
 		const campground = await Campground.findByIdAndDelete(id);
 		req.flash('success', 'Successfully deleted campground!');
 		res.redirect('/campgrounds');
