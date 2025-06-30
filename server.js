@@ -12,11 +12,6 @@ const port = process.env.PORT || 3000;
 //backend validation for forms
 const catchAsync = require('./utils/catchAsync');
 const ExpressError = require('./utils/ExpressError');
-const Joi = require('joi');
-const {
-	campgroundValidationSchema,
-	reviewValidationSchema
-} = require('./validationSchemas');
 
 //models
 const Campground = require('./models/campground');
