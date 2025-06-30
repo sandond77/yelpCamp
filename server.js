@@ -8,6 +8,9 @@ const app = express();
 const session = require('express-session');
 const flash = require('connect-flash');
 const port = process.env.PORT || 3000;
+const passport = require('passport');
+const LocalStrategy = require('passport-local');
+const User = require('./models/user');
 
 //backend validation for forms
 const catchAsync = require('./utils/catchAsync');
@@ -39,6 +42,7 @@ app.set('views', path.join(__dirname + '/views'));
 app.use(express.urlencoded({ extended: true })); //allows express to parse json
 app.use(methodOverride('_method')); //for using different crud methods on form submission
 
+//session setup
 const sessionConfig = {
 	secret: 'thisshouldbeabettersecret!',
 	resave: false,
@@ -52,10 +56,26 @@ const sessionConfig = {
 app.use(session(sessionConfig));
 app.use(flash());
 
+//passport configuration
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 app.use((req, res, next) => {
 	res.locals.success = req.flash('success');
 	res.locals.error = req.flash('error');
 	next();
+});
+
+app.get('/fakeuser', async (req, res) => {
+	const user = new User({
+		email: 'fake123@gmail.com',
+		username: 'fake'
+	});
+	const newUser = await User.register(user, 'test'); //register method from passport
+	res.send(newUser);
 });
 
 app.use('/campgrounds', campgroundRoutes);
