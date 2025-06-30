@@ -81,12 +81,12 @@ router.get(
 	isLoggedIn,
 	catchAsync(async (req, res) => {
 		const id = req.params.id;
-		const camp = await Campground.findById(id);
+		const campground = await Campground.findById(id);
 		if (!campground) {
 			req.flash('error', 'Campground does not exist!');
 			return res.redirect('/campgrounds');
 		}
-		if (!camp.author.equals(req.user._id)) {
+		if (!campground.author.equals(req.user._id)) {
 			req.flash('error', 'You do not have permission to do this!');
 			return res.redirect(`/campgrounds/${id}`);
 		}
