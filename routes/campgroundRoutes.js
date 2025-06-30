@@ -6,6 +6,7 @@ const Campground = require('../models/campground');
 const Review = require('../models/review');
 
 const { campgroundValidationSchema } = require('../validationSchemas');
+const isLoggedIn = require('../middleware');
 
 const validateCampground = (req, res, next) => {
 	const { error } = campgroundValidationSchema.validate(req.body);
@@ -28,6 +29,7 @@ router.get(
 router.post(
 	'/',
 	validateCampground,
+	isLoggedIn,
 	catchAsync(async (req, res, next) => {
 		const campground = new Campground(req.body.campground);
 		await campground.save();
@@ -36,7 +38,7 @@ router.post(
 	})
 );
 
-router.get('/new', (req, res) => {
+router.get('/new', isLoggedIn, (req, res) => {
 	res.render('campgrounds/new');
 });
 
@@ -57,6 +59,7 @@ router.get(
 router.put(
 	'/:id',
 	validateCampground,
+	isLoggedIn,
 	catchAsync(async (req, res) => {
 		const id = req.params.id;
 		const campground = await Campground.findByIdAndUpdate(id, {
@@ -69,6 +72,7 @@ router.put(
 
 router.get(
 	'/:id/edit',
+	isLoggedIn,
 	catchAsync(async (req, res) => {
 		const id = req.params.id;
 		const campground = await Campground.findById(id);
@@ -82,6 +86,7 @@ router.get(
 
 router.delete(
 	'/:id',
+	isLoggedIn,
 	catchAsync(async (req, res) => {
 		const id = req.params.id;
 		const campground = await Campground.findByIdAndDelete(id);
