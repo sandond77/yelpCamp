@@ -9,13 +9,14 @@
                         <h5 class="card-title">
                             <%= campground.title %>
                         </h5>
-                        <h6 class="card-subtitle mb-2 text-muted">
+                        <h6 class="card-subtitle mb-2 text-muted d-flex justify-content-between">
                             <%= campground.location %>   
+                            <div>Submitted By: <%= campground.author.username%></div>
                         </h6> 
                     </li>
                     <li class="list-group-item"><%= campground.description %></li>
-                    <li class="list-group-item">Submitted by: <%= campground.author.username%> </li>
                     <li class="list-group-item">$<%= campground.price%>/Night</li>
+                    <% if(currentUser && campground.author.equals(currentUser._id)){ %>
                     <li class="list-group-item">
                         <div>
                             <form action="/campgrounds/<%= campground._id%>?_method=DELETE" method="POST">
@@ -23,8 +24,8 @@
                                 <button type="submit" class="btn btn-danger">Delete Campground</button>
                             </form>
                         </div>
-
                     </li>           
+                    <% } %>
                 </ul>
                 <div class="text-muted text-center">
                     <a href="/campgrounds">Return To All Campgrounds</a>
