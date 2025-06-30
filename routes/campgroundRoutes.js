@@ -6,7 +6,7 @@ const Campground = require('../models/campground');
 const Review = require('../models/review');
 
 const { campgroundValidationSchema } = require('../validationSchemas');
-const isLoggedIn = require('../middleware');
+const { isLoggedIn } = require('../middleware');
 
 const validateCampground = (req, res, next) => {
 	const { error } = campgroundValidationSchema.validate(req.body);
