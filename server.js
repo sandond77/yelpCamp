@@ -21,8 +21,9 @@ const Campground = require('./models/campground');
 const Review = require('./models/review');
 
 //routes
-const campgroundRoutes = require('./routes/campgrounds');
-const reviewRoutes = require('./routes/reviews');
+const campgroundRoutes = require('./routes/campgroundRoutes');
+const reviewRoutes = require('./routes/reviewRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 //section for mongoose connection and database connection
 main().catch((err) => console.log(`connection error: ${err}`));
@@ -69,6 +70,7 @@ app.use((req, res, next) => {
 	next();
 });
 
+app.use('/', userRoutes);
 app.use('/campgrounds', campgroundRoutes);
 app.use('/campgrounds/:id/reviews', reviewRoutes);
 
