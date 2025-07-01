@@ -56,9 +56,12 @@
             <%for(let review of campground.reviews){ %>
                 <div class="card mb-3">
                     <div class="card-body">
-                        <h5 class="card-title">Rating: <%=review.rating%>
+                        <h5 class="card-title">
+                             <%=review.author.username%>
                         </h5>
-                        <div class="card-subtitle">by: <%=review.author.username%></div>
+                        <p class="starability-result" data-rating="<%=review.rating%>">
+                            Rated: <%=review.rating%> stars
+                        </p>
                         <p>Review: <%=review.body%> 
                         </p>
                         <% if(currentUser && review.author.equals(currentUser._id)) { %>
