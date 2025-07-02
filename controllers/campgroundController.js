@@ -12,6 +12,11 @@ module.exports.renderNewForm = (req, res) => {
 
 module.exports.createCampground = async (req, res, next) => {
 	const campground = new Campground(req.body.campground);
+	campground.images = req.files.map((file) => ({
+		//looks through file array to map objects for database
+		url: file.path,
+		filename: file.filename
+	}));
 	campground.author = req.user._id;
 	await campground.save();
 	req.flash('success', 'Successfully made a new campground!');

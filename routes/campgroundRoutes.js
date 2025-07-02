@@ -8,16 +8,15 @@ const { storage } = require('../cloudinary');
 const upload = multer({ storage });
 
 // prettier-ignore
-router.route('/')
+router
+	.route('/')
 	.get(catchAsync(campgrounds.index))
-	// .post(
-	// 	validateCampground,
-	// 	isLoggedIn,
-	// 	catchAsync(campgrounds.createCampground)
-	// );
-	.post(upload.array('image'),(req,res) => 
-		console.log(req.body,req.files)
-	)
+	.post(
+		isLoggedIn,
+		validateCampground,
+		upload.array('image'),
+		catchAsync(campgrounds.createCampground)
+	);
 
 router.get('/new', isLoggedIn, campgrounds.renderNewForm);
 
