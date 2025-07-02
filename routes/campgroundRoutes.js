@@ -7,11 +7,12 @@ const { isLoggedIn, validateCampground, isAuthor } = require('../middleware');
 // prettier-ignore
 router.route('/')
 	.get(catchAsync(campgrounds.index))
-	.post(
-		validateCampground,
-		isLoggedIn,
-		catchAsync(campgrounds.createCampground)
-	);
+	// .post(
+	// 	validateCampground,
+	// 	isLoggedIn,
+	// 	catchAsync(campgrounds.createCampground)
+	// );
+	.post((req,res) => res.send(req.body))
 
 router.get('/new', isLoggedIn, campgrounds.renderNewForm);
 
