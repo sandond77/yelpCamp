@@ -3,6 +3,8 @@ const router = express.Router();
 const catchAsync = require('../utils/catchAsync');
 const campgrounds = require('../controllers/campgroundController.js');
 const { isLoggedIn, validateCampground, isAuthor } = require('../middleware');
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
 
 // prettier-ignore
 router.route('/')
@@ -12,7 +14,8 @@ router.route('/')
 	// 	isLoggedIn,
 	// 	catchAsync(campgrounds.createCampground)
 	// );
-	.post((req,res) => res.send(req.body))
+	.post(upload.array('image'),(req,res) => 
+		console.log(req.body,req.files))
 
 router.get('/new', isLoggedIn, campgrounds.renderNewForm);
 
