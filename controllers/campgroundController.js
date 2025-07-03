@@ -19,7 +19,7 @@ module.exports.createCampground = async (req, res, next) => {
 	}));
 	campground.author = req.user._id;
 	await campground.save();
-	console.log(campground);
+	// console.log(campground);
 	req.flash('success', 'Successfully made a new campground!');
 	res.redirect(`/campgrounds/${campground._id}`);
 };
@@ -63,6 +63,14 @@ module.exports.editCampground = async (req, res) => {
 	}));
 	campground.images.push(...imgs); //imgs is already an array; need to spread contents into the existing images array
 	await campground.save();
+	if (req.body.deleteImages) {
+		await campground.updateOne({
+			$pull: {
+				images: { filename: { $in: req.body.deleteImages } }
+			}
+		});
+		console.log(campground);
+	}
 	req.flash('success', 'Successfully updated campground!');
 	res.redirect(`/campgrounds/${id}`);
 };
