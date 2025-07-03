@@ -1,3 +1,4 @@
+const { cloudinary } = require('../cloudinary');
 const Campground = require('../models/campground');
 const Review = require('../models/review');
 
@@ -64,6 +65,9 @@ module.exports.editCampground = async (req, res) => {
 	campground.images.push(...imgs); //imgs is already an array; need to spread contents into the existing images array
 	await campground.save();
 	if (req.body.deleteImages) {
+		for (let filename of req.body.deleteImages) {
+			await cloudinary.uploader.destroy(filename);
+		}
 		await campground.updateOne({
 			$pull: {
 				images: { filename: { $in: req.body.deleteImages } }
