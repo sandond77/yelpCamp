@@ -100,11 +100,7 @@ map.on('load', () => {
 	// description HTML from its properties.
 	map.on('click', 'unclustered-point', (e) => {
 		const coordinates = e.features[0].geometry.coordinates.slice();
-		const mag = e.features[0].properties.mag;
-		const tsunami =
-			e.features[0].properties.tsunami === 1
-				? 'sl;dfjdasl;fasfd'
-				: 'kasdhfksdfa';
+		const { popUpMarkup } = e.features[0].properties;
 
 		// Ensure that if the map is zoomed out such that
 		// multiple copies of the feature are visible, the
@@ -115,10 +111,7 @@ map.on('load', () => {
 			}
 		}
 
-		new mapboxgl.Popup()
-			.setLngLat(coordinates)
-			.setHTML(`magnitude: ${mag}<br>Was there a tsunami?: ${tsunami}`)
-			.addTo(map);
+		new mapboxgl.Popup().setLngLat(coordinates).setHTML(popUpMarkup).addTo(map);
 	});
 
 	map.on('mouseenter', 'clusters', () => {
