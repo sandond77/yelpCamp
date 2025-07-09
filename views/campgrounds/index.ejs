@@ -26,7 +26,7 @@
         </div>
     <% }%>
     <script>
-        const mapToken = '<%- process.env.MAPBOX_TOKEN %>';
+        const maptilerApiKey = '<%- process.env.MAPTILER_API_KEY %>';
         const campgrounds = {features: <%- JSON.stringify(campgrounds) %>};
     </script>
     <script src="scripts/clusterMap.js"></script>
