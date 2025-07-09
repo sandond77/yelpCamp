@@ -65,6 +65,7 @@ const sessionConfig = {
 };
 app.use(session(sessionConfig));
 app.use(flash());
+app.use(helmet());
 
 //passport configuration
 app.use(passport.initialize());
