@@ -17,6 +17,7 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const User = require('./models/user');
 const sanitizeV5 = require('./utils/mongoSanitizeV5.js');
+const helmet = require('helmet');
 
 //backend validation for forms
 const catchAsync = require('./utils/catchAsync');
@@ -42,6 +43,47 @@ async function main() {
 
 app.use(express.static(path.join(__dirname, 'public'))); //for serving static pages;
 app.use(sanitizeV5({ replaceWith: '_' }));
+
+const scriptSrcUrls = [
+	'https://stackpath.bootstrapcdn.com/',
+	'https://kit.fontawesome.com/',
+	'https://cdnjs.cloudflare.com/',
+	'https://cdn.jsdelivr.net',
+	'https://cdn.maptiler.com/'
+];
+const styleSrcUrls = [
+	'https://kit-free.fontawesome.com/',
+	'https://stackpath.bootstrapcdn.com/',
+	'https://fonts.googleapis.com/',
+	'https://use.fontawesome.com/',
+	'https://cdn.jsdelivr.net',
+	'https://cdn.maptiler.com/'
+];
+const connectSrcUrls = ['https://api.maptiler.com/'];
+
+const fontSrcUrls = [];
+
+app.use(
+	helmet.contentSecurityPolicy({
+		directives: {
+			defaultSrc: [],
+			connectSrc: ["'self'", ...connectSrcUrls],
+			scriptSrc: ["'unsafe-inline'", "'self'", ...scriptSrcUrls],
+			styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
+			workerSrc: ["'self'", 'blob:'],
+			objectSrc: [],
+			imgSrc: [
+				"'self'",
+				'blob:',
+				'data:',
+				'https://res.cloudinary.com/dd00cd87d/', //SHOULD MATCH YOUR CLOUDINARY ACCOUNT!
+				'https://images.unsplash.com/',
+				'https://api.maptiler.com/'
+			],
+			fontSrc: ["'self'", ...fontSrcUrls]
+		}
+	})
+);
 
 //EJS setup with express and folder directory
 app.engine('ejs', ejsMate);
