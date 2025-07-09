@@ -103,14 +103,8 @@
     </div>
 </div>
 
-<script id="maptiler-key" type="application/json">
-    <%- JSON.stringify(process.env.MAPTILER_API_KEY) %>
-  </script>
-
-<script id="campground-data" type="application/json">
-    <%- JSON.stringify(campground) %>
-  </script>
-
-<!-- External JS file -->
-<script src="/scripts/initCampgroundMap.js"></script>
+<script>
+    const mapToken = '<%- process.env.MAPBOX_TOKEN %>';
+    const campground = <%- JSON.stringify(campground) %>
+</script>
 <script src="/scripts/showPageMap.js"></script>

@@ -1,24 +1,20 @@
-// const maptilerApiKey = JSON.parse(
-// 	document.getElementById('maptiler-key')?.textContent || '""'
-// );
-// const campgrounds = JSON.parse(
-// 	document.getElementById('campgrounds-data')?.textContent || 'null'
-// );
+mapboxgl.accessToken = mapToken;
 
-maptilersdk.config.apiKey = maptilerApiKey;
-
-const map = new maptilersdk.Map({
-	container: 'map',
-	style: maptilersdk.MapStyle.BRIGHT,
+const map = new mapboxgl.Map({
+	container: 'map', // container ID
+	style: 'mapbox://styles/mapbox/streets-v12', // style URL
 	center: campground.geometry.coordinates, // starting position [lng, lat]
-	zoom: 10 // starting zoom
+	zoom: 9 // starting zoom
 });
 
-new maptilersdk.Marker()
+// Set marker options.
+const marker = new mapboxgl.Marker()
 	.setLngLat(campground.geometry.coordinates)
 	.setPopup(
-		new maptilersdk.Popup({ offset: 25 }).setHTML(
-			`<h3>${campground.title}</h3><p>${campground.location}</p>`
+		new mapboxgl.Popup({ offsete: 25 }).setHTML(
+			`<h4>${campground.title}</h4><p>${campground.location}</p>`
 		)
 	)
 	.addTo(map);
+
+map.addControl(new mapboxgl.NavigationControl());
