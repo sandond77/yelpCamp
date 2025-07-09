@@ -1,9 +1,8 @@
 const { cloudinary } = require('../cloudinary');
 const Campground = require('../models/campground');
 const Review = require('../models/review');
-const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
-const mapBoxToken = process.env.MAPBOX_TOKEN;
-const geoCoder = mbxGeocoding({ accessToken: mapBoxToken });
+const maptilerClient = require('@maptiler/client');
+maptilerClient.config.apiKey = process.env.MAPTILER_API_KEY;
 
 module.exports.index = async (req, res) => {
 	const campgrounds = await Campground.find({});
@@ -15,20 +14,18 @@ module.exports.renderNewForm = (req, res) => {
 };
 
 module.exports.createCampground = async (req, res, next) => {
-	const geoData = await geoCoder
-		.forwardGeocode({
-			query: req.body.campground.location,
-			limit: 1
-		})
-		.send();
+	const geoData = await maptilerClient.geocoding.forward(
+		req.body.campground.location,
+		{ limit: 1 }
+	);
 	const campground = new Campground(req.body.campground);
+	campground.geometry = geoData.features[0].geometry;
 	campground.images = req.files.map((file) => ({
 		//looks through file array to map objects for database
 		url: file.path,
 		filename: file.filename
 	}));
 	campground.author = req.user._id;
-	campground.geometry = geoData.body.features[0].geometry;
 	await campground.save();
 	console.log(campground);
 	req.flash('success', 'Successfully made a new campground!');
@@ -67,6 +64,11 @@ module.exports.editCampground = async (req, res) => {
 	const campground = await Campground.findByIdAndUpdate(id, {
 		...req.body.campground
 	});
+	const geoData = await maptilerClient.geocoding.forward(
+		req.body.campground.location,
+		{ limit: 1 }
+	);
+	campground.geometry = geoData.features[0].geometry;
 	const imgs = req.files.map((file) => ({
 		//looks through file array to map objects for database
 		url: file.path,

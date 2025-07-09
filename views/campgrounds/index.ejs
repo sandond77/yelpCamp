@@ -25,8 +25,14 @@
             </div>
         </div>
     <% }%>
-    <script>
-        const mapToken = '<%- process.env.MAPBOX_TOKEN %>';
-        const campgrounds = {features: <%- JSON.stringify(campgrounds) %>};
+    <script id="maptiler-key" type="application/json">
+            <%- JSON.stringify(process.env.MAPTILER_API_KEY) %>
     </script>
+    
+    <script id="campgrounds-data" type="application/json">
+            <%- JSON.stringify({ features: campgrounds }) %>
+    </script>
+    
+    <!-- External script -->
+    <script src="/scripts/initCampgroundsMap.js"></script>
     <script src="scripts/clusterMap.js"></script>
