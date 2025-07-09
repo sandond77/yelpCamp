@@ -9,12 +9,14 @@ const path = require('path');
 const mongoose = require('mongoose');
 const methodOverride = require('method-override');
 const app = express();
+app.set('query parser', 'extended');
 const session = require('express-session');
 const flash = require('connect-flash');
 const port = process.env.PORT || 3000;
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const User = require('./models/user');
+const sanitizeV5 = require('./utils/mongoSanitizeV5.js');
 
 //backend validation for forms
 const catchAsync = require('./utils/catchAsync');
@@ -39,6 +41,7 @@ async function main() {
 }
 
 app.use(express.static(path.join(__dirname, 'public'))); //for serving static pages;
+app.use(sanitizeV5({ replaceWith: '_' }));
 
 //EJS setup with express and folder directory
 app.engine('ejs', ejsMate);
