@@ -7,6 +7,7 @@ const ejs = require('ejs');
 const ejsMate = require('ejs-mate');
 const path = require('path');
 const mongoose = require('mongoose');
+const MongoStore = require('connect-mongo');
 const methodOverride = require('method-override');
 const app = express();
 app.set('query parser', 'extended');
@@ -33,11 +34,11 @@ const reviewRoutes = require('./routes/reviewRoutes');
 const userRoutes = require('./routes/userRoutes');
 
 //section for mongoose connection and database connection
-const dbUrl = process.env.DB_URL;
+// const dbUrl = process.env.DB_URL;
+const dbUrl = 'mongodb://127.0.0.1:27017/yelp-camp';
 
 async function main() {
-	await mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp');
-	// await mongoose.connect(dbUrl);
+	await mongoose.connect(dbUrl);
 	console.log('connected to mongod');
 	// use `await mongoose.connect('mongodb://user:password@127.0.0.1:27017/test');` if your database has auth enabled
 }
@@ -94,8 +95,22 @@ app.set('views', path.join(__dirname + '/views'));
 app.use(express.urlencoded({ extended: true })); //allows express to parse json
 app.use(methodOverride('_method')); //for using different crud methods on form submission
 
+//Setting up mongo for session storage instead of local
+const store = MongoStore.create({
+	mongoUrl: dbUrl,
+	touchAfter: 24 * 60 * 60, //updates after 1 day
+	crypto: {
+		secret: 'thisshouldbeabettersecret!'
+	}
+});
+
+store.on('error', function (err) {
+	console.log(`Session store error ${err}`);
+});
+
 //session setup
 const sessionConfig = {
+	store,
 	name: 'session',
 	secret: 'thisshouldbeabettersecret!',
 	resave: false,
