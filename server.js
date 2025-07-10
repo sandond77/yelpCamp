@@ -34,13 +34,11 @@ const reviewRoutes = require('./routes/reviewRoutes');
 const userRoutes = require('./routes/userRoutes');
 
 //section for mongoose connection and database connection
-// const dbUrl = process.env.DB_URL;
-const dbUrl = 'mongodb://127.0.0.1:27017/yelp-camp';
+const dbUrl = process.env.DB_URL || 'mongodb://127.0.0.1:27017/yelp-camp';
 
 async function main() {
 	await mongoose.connect(dbUrl);
 	console.log('connected to mongod');
-	// use `await mongoose.connect('mongodb://user:password@127.0.0.1:27017/test');` if your database has auth enabled
 }
 main().catch((err) => console.log(`connection error: ${err}`));
 
@@ -96,11 +94,12 @@ app.use(express.urlencoded({ extended: true })); //allows express to parse json
 app.use(methodOverride('_method')); //for using different crud methods on form submission
 
 //Setting up mongo for session storage instead of local
+const secret = process.env.SECRET || 'supersecrertlasdjflafj;lasdfj;al';
 const store = MongoStore.create({
 	mongoUrl: dbUrl,
 	touchAfter: 24 * 60 * 60, //updates after 1 day
 	crypto: {
-		secret: 'thisshouldbeabettersecret!'
+		secret
 	}
 });
 
@@ -112,7 +111,7 @@ store.on('error', function (err) {
 const sessionConfig = {
 	store,
 	name: 'session',
-	secret: 'thisshouldbeabettersecret!',
+	secret,
 	resave: false,
 	saveUninitialized: true,
 	cookie: {
