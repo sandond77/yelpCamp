@@ -33,13 +33,15 @@ const reviewRoutes = require('./routes/reviewRoutes');
 const userRoutes = require('./routes/userRoutes');
 
 //section for mongoose connection and database connection
-main().catch((err) => console.log(`connection error: ${err}`));
+const dbUrl = process.env.DB_URL;
 
 async function main() {
 	await mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp');
+	// await mongoose.connect(dbUrl);
 	console.log('connected to mongod');
 	// use `await mongoose.connect('mongodb://user:password@127.0.0.1:27017/test');` if your database has auth enabled
 }
+main().catch((err) => console.log(`connection error: ${err}`));
 
 app.use(express.static(path.join(__dirname, 'public'))); //for serving static pages;
 app.use(sanitizeV5({ replaceWith: '_' }));
