@@ -14,14 +14,12 @@ module.exports.renderNewForm = (req, res) => {
 };
 
 module.exports.createCampground = async (req, res, next) => {
-	const geoData = await geocoder
-		.forwardGeocode({
-			query: req.body.campground.location,
-			limit: 1
-		})
-		.send();
+	const geoData = await maptilerClient.geocoding.forward(
+		req.body.campground.location,
+		{ limit: 1 }
+	);
 	const campground = new Campground(req.body.campground);
-	campground.geometry = geoData.body.features[0].geometry;
+	campground.geometry = geoData.features[0].geometry;
 	campground.images = req.files.map((file) => ({
 		//looks through file array to map objects for database
 		url: file.path,
